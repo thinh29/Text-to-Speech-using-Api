@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Thinh Nguyen">
+    <title>Text to Speech</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.6/dist/sweetalert2.min.css">
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.6"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <!-- Bootstrap core CSS -->
+<!--<link href="assets/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="{{ url_for('static',filename='assets/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='starter-template.css') }}" rel="stylesheet">
+  </head>
+  <body>
+    
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('home') }}">Text to Speech</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item active">
+          <a class="nav-link" aria-current="page" href="{{ url_for('home') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Hướng dẫn</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="dich-vu" data-bs-toggle="dropdown" aria-expanded="false">Dịch vụ</a>
+          <ul class="dropdown-menu" aria-labelledby="dich-vu">
+            <li><a class="dropdown-item" href="{{ url_for('home') }}">Google TTS</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('zalo') }}">Zalo TTS</a></li>
+            <li><a class="dropdown-item" href="">FPT TTS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<main class="container">
+
+  <div class="text-center py-2 px-3">
+    <h1>Text to Speech</h1>
+    <p class="lead">Chuyển đổi văn bản thành giọng nói nhanh chóng.</p>
+  </div>
+  
+{% block content %}{% endblock content %}
+
+
+</main><!-- /.container -->
+<script type="text/javascript">
+function postData(){
+const ipAPI = "{{ url_for('postData') }}";
+var text =  document.getElementById("input_text").value;
+var langs =  document.getElementById("langs").value;
+var lang = langs.value;
+var file = { 'lang': langs , 'text':text };
+var headers1 = {
+   "Content-Type": "application/json",                                                                                                
+   "Access-Control-Origin": "*"
+}
+Swal.queue([{
+  title: 'Xác nhận',
+  confirmButtonText: 'OK. Bắt đầu',
+  text:
+    'Bắt đầu chuyển đổi? ' ,
+  showLoaderOnConfirm: true,
+  preConfirm: () => {
+    return fetch(ipAPI,{
+      method: 'POST',
+      headers: headers1,
+      body: JSON.stringify(file)
+
+    })
+      .then(response => response.json())
+      .then(data => Swal.insertQueueStep({
+        title: 'Chuyển đổi thành công',
+        html:'<audio controls><source src="'+ data["dir"] + '"></audio>' + 
+        '<h4 id="addPlaylist"><a href="javascript:update_pl(\''+ data["dir"] + '\')">Thêm vào Playlist (Sẽ mất khi refrest trang ! )</a></h4>' ,
+        confirmButtonText: 'OK'
+      }))
+      .catch(() => {
+        Swal.insertQueueStep({
+          icon: 'error',
+          title: 'Không thể chuyển đổi'
+        })
+      })
+  }
+}])
+}
+</script>
+<script type="text/javascript">
+  function ZpostData(){
+const ipAPI = "{{ url_for('ZpostData') }}" ;
+var api =  document.getElementById("itext").value;
+var text =  document.getElementById("input_text").value;
+var speaker_id =  document.getElementById("speaker_id").value;
+var speed =  document.getElementById("speed").value;
+
+var file = { 'api': api , 'text':text ,'speaker_id' : speaker_id, 'speed':speed };
+var headers1 = {
+   "Content-Type": "application/json",                                                                                                
+   "Access-Control-Origin": "*"
+}
+Swal.queue([{
+  title: 'Xác nhận',
+  confirmButtonText: 'OK. Bắt đầu',
+  text:
+    'Bắt đầu chuyển đổi? ' ,
+  showLoaderOnConfirm: true,
+  preConfirm: () => {
+    return fetch(ipAPI,{
+      method: 'POST',
+      headers: headers1,
+      body: JSON.stringify(file)
+
+    })
+      .then(response => response.json())
+      .then(data => Swal.insertQueueStep({
+        title: 'Chuyển đổi thành công',
+        html:'<audio controls><source src="'+ data["dir"] + '"></audio>' + 
+        '<h4 id="addPlaylist"><a href="javascript:update_pl(\''+ data["dir"] + '\')">Thêm vào Playlist (Sẽ mất khi refrest trang ! )</a></h4>' , 
+      }))
+      .catch(() => {
+        Swal.insertQueueStep({
+          icon: 'error',
+          title: 'Không thể chuyển đổi'
+        })
+      })
+  }
+}])
+}
+</script>
+    <div class="ap" id="ap">
+  <div class="ap__inner">
+      <div class="ap__item ap__item--playback">
+        <button class="ap__controls ap__controls--prev">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#333" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M9.516 12l8.484-6v12zM6 6h2.016v12h-2.016v-12z"></path>
+          </svg>
+        </button>
+        <button class="ap__controls ap__controls--toggle">
+          <svg class="icon-play" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#333" width="36" height="36" viewBox="0 0 36 36" data-play="M 12,26 18.5,22 18.5,14 12,10 z M 18.5,22 25,18 25,18 18.5,14 z" data-pause="M 12,26 16.33,26 16.33,10 12,10 z M 20.66,26 25,26 25,10 20.66,10 z">
+            <path d="M 12,26 18.5,22 18.5,14 12,10 z M 18.5,22 25,18 25,18 18.5,14 z"></path>
+          </svg>
+        </button>
+        <button class="ap__controls ap__controls--next">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#333" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M15.984 6h2.016v12h-2.016v-12zM6 18v-12l8.484 6z"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="ap__item ap__item--track">
+        <div class="track">
+          <div class="track__title">Queue is empty</div>
+          <div class="track__time">
+            <span class="track__time--current">--</span>
+            <span> / </span>
+            <span class="track__time--duration">--</span>
+          </div>
+
+          <div class="progress-container">
+            <div class="progress">
+              <div class="progress__bar"></div>
+              <div class="progress__preload"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="ap__item ap__item--settings">
+        <div class="ap__controls volume-container">
+          <button class="volume-btn">
+            <svg class="icon-volume-on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#333" width="24" height="24" viewBox="0 0 24 24">
+              <path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q2.484 1.219 2.484 4.031zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path>
+            </svg>
+            <svg class="icon-volume-off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#333" width="24" height="24" viewBox="0 0 24 24">
+              <path d="M12 3.984v4.219l-2.109-2.109zM4.266 3l16.734 16.734-1.266 1.266-2.063-2.063q-1.734 1.359-3.656 1.828v-2.063q1.172-0.328 2.25-1.172l-4.266-4.266v6.75l-5.016-5.016h-3.984v-6h4.734l-4.734-4.734zM18.984 12q0-2.391-1.383-4.219t-3.586-2.484v-2.063q3.047 0.656 5.016 3.117t1.969 5.648q0 2.25-1.031 4.172l-1.5-1.547q0.516-1.266 0.516-2.625zM16.5 12q0 0.422-0.047 0.609l-2.438-2.438v-2.203q2.484 1.219 2.484 4.031z"></path>
+            </svg>
+          </button>
+          <div class="volume">
+            <div class="volume__track">
+              <div class="volume__bar"></div>
+            </div>
+          </div>
+        </div>
+        <button class="ap__controls ap__controls--repeat">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#333" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M17.016 17.016v-4.031h1.969v6h-12v3l-3.984-3.984 3.984-3.984v3h10.031zM6.984 6.984v4.031h-1.969v-6h12v-3l3.984 3.984-3.984 3.984v-3h-10.031z"></path>
+          </svg>
+        </button>
+        <button class="ap__controls ap__controls--playlist">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#333" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M17.016 12.984l4.969 3-4.969 3v-6zM2.016 15v-2.016h12.984v2.016h-12.984zM18.984 5.016v1.969h-16.969v-1.969h16.969zM18.984 9v2.016h-16.969v-2.016h16.969z"></path>
+          </svg>
+        </button>
+        <button class="ap__controls ap__controls--download">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#333" width="24" height="24" viewBox="0 0 24 24">
+<path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+          </svg>
+        </button>
+      </div>
+  </div>
+</div>
+ <script src="{{ url_for('static',filename='myScript.js') }}"></script>
+    <script src="{{ url_for('static',filename='assets/dist/js/bootstrap.bundle.min.js') }}"></script>  
+  </body>
+</html>

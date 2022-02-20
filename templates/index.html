@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div class="alert alert-success">
+    <strong>Dịch vụ Text to Speech (Zalo) !</strong> Vui lòng làm đúng theo lời dẫn bên dưới để có thể chuyển đổi.
+  </div>
+	<form class="row" method="POST" action="javascript:postData()">
+	    <div class="col-md-12">
+	      <div class="mb-3">
+	          {{ form.hidden_tag() }}
+	          {{ form.text(class="form-control form-control-lg",id="input_text",placeholder=form.text.label.text, rows="9") }}
+	          {{ form.lang(class="form-select form-select-lg mb-3 mt-3",id="langs")}}
+	      </div>
+	    </div>
+	    <div class="col-md-12 text-center">
+	      {{ form.submit(class="btn btn-primary btn-lg mb-3",disabled=True) }}
+	    </div>
+	</form>
+
+	<div class="row">
+		<div class="col-md-12">
+		<!-- Test update playlist -->
+		
+		</div>
+	</div>
+{% endblock content %}
